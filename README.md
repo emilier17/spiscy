@@ -1,9 +1,11 @@
-Thanks for checking out SPiSCy. Get starting by reading the documentation below, or watch the [SPiSCY Tour video](placeholder) for a detailed walkthrough. 
+## Get Started
+
+Read the documentation below, or watch the [SPiSCy Tour video](placeholder) for a detailed walkthrough. 
 
 
 ## Overview
 
-SPiSCy (<u>S</u>nakemake <u>Pi</u>line for <u>S</u>pectral <u>Cy</u>tometry) is a bioinformatic pipeline to fully analyze large spectral flow cytometry datasets. SPiSCY aims to be:
+SPiSCy (**S**nakemake **Pi**peline for **S**pectral **Cy**tometry) is a bioinformatic pipeline to fully analyze large spectral flow cytometry datasets. SPiSCy aims to be:
 - flexible, by having extensive custom configuration
 - reproducible, by having detailed logs
 - complete, by starting from raw FCS files and performing all steps for a full analysis
@@ -12,10 +14,10 @@ SPiSCy (<u>S</u>nakemake <u>Pi</u>line for <u>S</u>pectral <u>Cy</u>tometry) is 
 
 ## Features
 
-Starting from FCS files straight from the cytometer, SPiSCY performs:
+Starting with FCS files from the cytometer, SPiSCy performs:
 - extensive data preprocessing (gating, transformation, QC, normalization)
 - dimensionality reduction (choice of 5 methods - PCA, KernelPCA, Isomap, FastICA, or direct markers)
-- clustering (choice of 6 methods - FlowSOM, PARC, PhenoGraph, BIRCH, CytoVI, and HDBSCAN)
+- clustering (choice of 6 methods - FlowSOM, PARC, PhenoGraph, BIRCH, CytoVI, or HDBSCAN)
 - comparaison between clustering results
 - differential analysis (abundance and marker expression)
 
@@ -38,7 +40,7 @@ SPiSCy is written in R and Python and uses Snakemake to automate the workflow. A
 Snakemake works by setting up rules that define how to create output files from input files. For more information about how Snakemake works, please see the official [documentation](https://snakemake.readthedocs.io/en/stable/). 
 
 
-SPiSCY is organized per official Snakemake recommendations:
+SPiSCy is organized per official Snakemake recommendations:
 
 ```
 .
@@ -70,12 +72,13 @@ This is the SPiSCy rulegraph, or what happens in what order to go from raw FCS f
 
 ## Limits
 
-**Coding knowledge.** While SPiSCy is deisnged to be mostly automatic, you will still need to use the command line to install and run SPiSCy. You will also need to be able to modify yaml files to customize configuration settings. These steps are explained in the [Go to section](#installation-and-setup) and [Go to section](#usage) sections, as well as the [video](placeholder). 
+**Coding knowledge.** While SPiSCy is designed to be mostly automatic, you will still need to use the command line to install and run SPiSCy. You will also need to be able to modify yaml files to customize configuration settings. These steps are explained in the [Installation](#installation-and-setup) and [Usage](#usage) sections, as well as the [video](placeholder). 
 
 
 **Biological knowledge.** Technical knowledge about cytometry and biological knowledge about the dataset is required to use SPiSCy. 
+
 Preprocessing steps:
-- Gating: selec the cells of interest using typical bi-marker plots
+- Gating: select the cells of interest using typical bi-marker plots
 - Transformation: know the typical distributions of the markers in your panel
 - Batch correction: evaluate how batch correction affected marker distribution
 
@@ -84,17 +87,16 @@ Clustering steps:
 - Evaluation: annotate clusters based on markers, interpret the biological coherence of identified clusters
 
 
-**Data and preprocessing quality.** Clustering and differential analysis quality is highly dependent on the quality of the raw data and the configuration choices made during the preprocessing steps. To ensure optimal cytometry quality, please follow the [best practices](https://www.thermofisher.com/ca/en/home/references/newsletters-and-journals/bioprobes-journal-of-cell-biology-applications/bioprobes-79/best-practices-multiparametric-flow-cytometry.html). To ensure preprocessing quality, please verify and validate the intermediate results produced by each preprocessing step. For more detail on how to monitor the pipeline, please see [Go to section](#monitor-the-pipeline-log-files-and-intermediate-results) sections, or the [video](placeholder). 
+**Data and preprocessing quality.** Clustering and differential analysis quality is highly dependent on the quality of the raw data and the configuration choices made during the preprocessing steps. To ensure optimal cytometry quality, please follow the [best practices](https://www.thermofisher.com/ca/en/home/references/newsletters-and-journals/bioprobes-journal-of-cell-biology-applications/bioprobes-79/best-practices-multiparametric-flow-cytometry.html). To ensure preprocessing quality, please verify and validate the intermediate results produced by each preprocessing step. For more detail on how to monitor the pipeline, please see the [Monitor the pipeline](#monitor-the-pipeline-log-files-and-intermediate-results) section, or the [video](placeholder). 
 
 
-**Tool assumptions.** Every method used in SPiSCy has its own set of assumptions about the data. If you want to make sure the methods are adapted to your data, please see a link to each tool's documentation in [Go to section](#tools-and-documentation). 
+**Tool assumptions.** Every method used in SPiSCy has its own set of assumptions about the data. If you want to make sure the methods are adapted to your data, please see each tool's documentation in [Tools and documentation](#tools-and-documentation). 
 
 
 
 ## Requirements
 
-**Computing**
-For large datasets (tens of millions of cells), and HPC infrastructure is ideal to run SPiSCY. The total number of cells is the most important variable for memory usage. Here is an example of resources used on HPC to analyze a dataset with 32 million cells and 17 markers (215 FCS files). 
+**Computing.** For large datasets (tens of millions of cells), an HPC infrastructure is ideal to run SPiSCy. The total number of cells is the most important variable for memory usage. Here is an example of resources used on HPC to analyze a dataset with 32 million cells and 17 markers (215 FCS files). 
 
 
 Preprocessing
@@ -121,8 +123,7 @@ Differential analysis
 - Number of CPUs: 8
 
 
-**Differential analysis**
-Requires a minimum amount of samples per condition tested. A warning will be emitted if there are too few samples for a particular statistical test. 
+**Differential analysis.**Requires a minimum amount of samples per condition tested. A warning will be emitted if there are too few samples for a particular statistical test. 
 
 
 
@@ -150,8 +151,37 @@ Each rule will also produce intermediate results, such as plots, heatmaps and cs
 
 
 ## Tools and Documentation
-Preprocessing
 
-Clustering
+This is a list of the main packages and their documentations. 
 
-Differential analysis
+
+Preprocessing (R 4.4.0)
+- [cytonorm](https://github.com/saeyslab/CytoNorm ) 2.0.8
+- [flowcore](https://rdrr.io/bioc/flowCore/) 2.18.0
+- [flowstats](https://rdrr.io/github/RGLab/flowStats/) 4.18.0
+- [flowvs](https://rdrr.io/bioc/flowVS/) 1.38.0
+- [peacoqc](https://rdrr.io/bioc/PeacoQC/) 1.16.0
+- [ggplot2](https://ggplot2.tidyverse.org/) 3.5.1
+- [umap](https://github.com/tkonopka/umap) 0.2.10.0
+
+
+Clustering (python 3.11.14)
+- [flowsom](https://flowsom.readthedocs.io/en/latest/) 0.2.2
+- [matplotlib](https://matplotlib.org/) 3.10.8
+- [numpy](https://numpy.org/) 2.3.5
+- [pandas](https://pandas.pydata.org/) 2.3.3
+- [parc](https://parc.readthedocs.io/en/latest/index.html) 0.40
+- [phenograph](https://github.com/dpeerlab/phenograph) 1.5.7
+- scikit-learn 1.8.0
+    - [hdbscan](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.HDBSCAN.html)
+    - [birch](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.Birch.html)
+- [seaborn](https://seaborn.pydata.org/) 0.13.2
+- scvi-tools 1.4.1
+    - [cytovi](https://docs.scvi-tools.org/en/1.4.1/user_guide/models/cytovi.html)
+- [umap-learn](https://umap-learn.readthedocs.io/en/latest/) 0.5.11
+
+
+Differential analysis (R 4.4.0)
+- [diffcyt](https://rdrr.io/bioc/diffcyt/) 1.26.0
+- [edger](https://bioconductor.org/packages/release/bioc/html/edgeR.html) 4.4.0
+- [limma](https://bioconductor.org/packages/release/bioc/html/limma.html) 3.62.1
