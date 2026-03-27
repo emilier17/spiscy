@@ -109,9 +109,9 @@ Clustering
 - Time: depends on method and subsample size. 
     - FlowSOM: 10 min (clustering 13 million cells)
     - BIRCH: 14 min (clustering 13 million cells)
-    - PARC
-    - PhenoGraph
-    - CytoVI
+    - PARC: 25 min (clustering 950 000 cells)
+    - PhenoGraph: 2h08 (clustering 955 000 cells)
+    - CytoVI: 4h19 (clustering 855 000 cells)
     - HDBSCAN: 1h37 (clustering 855 000 cells)
 - Highest memory usage: 64 GB
 - CPUs: 8
@@ -123,7 +123,7 @@ Differential analysis
 - Number of CPUs: 8
 
 
-**Differential analysis.**Requires a minimum amount of samples per condition tested. A warning will be emitted if there are too few samples for a particular statistical test. 
+**Differential analysis.** Requires a minimum amount of samples per condition tested. A warning will be emitted if there are too few samples for a particular statistical test. 
 
 
 
@@ -131,10 +131,51 @@ Differential analysis
 
 ### HPC
 
-1. Clone SPiSCy repo
-2. R and Python
-3. Download snakemake and snakemake slurm executor plugin
-4. Prepare data folder. All FCS files must be placed in the ```data/all_raw``` folder. 2 csv files must be placed in the ```data``` folder: ```metadata.csv``` and ```marker_info.csv```
+1. Clone the repository. 
+
+
+Depending on your HPC infrastructure, you might be able to directly clone a GitHub repository with:
+
+```
+git clone https://github.com/emilier17/spiscy.git 
+```
+
+If direct cloning is not allowed, then clone the repository to a personal computer and upload the folder to the HPC using approved methods. 
+
+2. Check software availability. 
+
+
+Make sure R 4.4.0, Python 3.11, and Apptainer 1.4.5 are available on your HPC. This step depends on your HPC's infrastructure, so follow its documentation. Check if modules are already available:
+```
+module spider r
+module spider python
+module spider apptainer
+```
+
+If any module is missing, then follow your HPC installation instructions or request access. 
+
+
+3. Create a Snakemake environment with the Snakemake slurm executor plugin.
+
+
+Navigate to the spiscy folder. 
+
+```
+module load python/3.11
+virtualenv --no-download ~/envs/snakemake  # or choose your own path
+source ~/envs/snakemake/bin/activate
+pip install --no-index snakemake==8.20.6
+pip install snakemake-executor-plugin-slurm
+```
+
+4. Prepare the data folder.
+
+
+Place all FCS files in ```data/all_raw``` folder.
+
+
+Place the following CSV files in ```data``` folder: ```metadata.csv``` and ```marker_info.csv```
+
 
 ```metadata.csv``` must minimally contain a column called ```filename```, which lists all the FCS filenames present in ```data/all_raw```, without the .fcs extension. Here is an example of metadata.csv:
 ![metadata](images/metadata_csv.png)
@@ -143,14 +184,52 @@ Differential analysis
 ```marker_info.csv``` must contain columns ```marker_name```, ```channel```, and ```marker_class```. In ```marker_class```, indicate if the marker is used for distinguishing stable cell populations (type) or if the marker is used to characterize cells (state). Here is an example of marker_info.csv:
 ![marker_info](images/marker_info_csv.png)
 
-5. Adapt slurm profile and bash scripts
-6. Delete folders and files for Windows usage. You may delete the ```docker``` folder and the ```docker-compose.yaml``` file. 
-7. Customize config files. See [Customize configuration settings](#customize-configuration-settings). 
+5. Adapt slurm profile and bash scripts. 
+
+
+In ```run_spiscy.sh```, ```test_spiscy.sh```, and ```master_spiscy.sh```, paste the complete path to the spiscy folder in the indicated spaces. 
+
+
+In ```run_spiscy.sh```, ```test_spiscy.sh```, make sure the path to the snakemake environment is correct if you chose a different path in step 3. 
+
+
+In ```master_spiscy.sh```, adjust SBATCH parameters: account name, requested time, memory, and CPUs.
+
+> [!NOTE]
+> Each child job cannot request more CPUs than master_spiscy.sh allocates, so set CPUs to the maximum required by any rule. Check [Requirements](#requirements) for estimated runtimes. 
+
+
+In ```workflow/profiles/slurm/config.yaml```, indicate the account name. 
+
+6. Download containers and convert to Apptainer.
+
+```
+cd apptainers
+module load apptainer/1.4.5
+apptainer pull spiscy_pybase.sif docker://ghcr.io/emilier17/spiscy_pybase:1.0
+apptainer pull spiscy_rbase.sif docker://ghcr.io/emilier17/spiscy_rbase:1.0
+```
+
+This might take a few minutes. 
+
+7. Optional cleanup
+
+
+Delete folders and files for Windows usage.
+
+
+You may delete the ```docker``` folder and the ```docker-compose.yaml``` file. 
+
+8. Customize configuration files.
+
+
+See [Customize configuration settings](#customize-configuration-settings) to adapt the configuration settings to your dataset. 
 
 
 ### Windows
 
-1. Clone the repository
+1. Clone the repository.
+
 
 In your terminal, change the current working directory to the location where you want spiscy to be and run:
 
@@ -162,26 +241,43 @@ A directory called spiscy will be created in the current working directory. Chan
 ```
 cd spiscy
 ```
-3. Build the docker images. This will take several minutes. 
+
+3. Build the docker images.
+
+
+This will take several minutes. 
 ```
 docker build -f docker/Dockerfile_rbase -t spiscy_rbase:1.0 .
-```
-```
 docker build -f docker/Dockerfile_pybase -t spiscy_pybase:1.0 .
 ```
-4. Prepare the data folder. See step 4 in the HPC setup
-5. Delete folders and files for HPC usage. You may delete the folders ```apptainers``` and ```workflow/profiles```, as well as files ```master_spiscy.sh```, ```run_spiscy.sh```, and ```test_spiscy.sh```. 
-6. Customize config files. See [Customize configuration settings](#customize-configuration-settings) 
+
+4. Prepare the data folder.
+
+
+See instructions in step 4 in the HPC setup
+
+5. Optional cleanup
+
+
+Delete folders and files for HPC usage.
+
+
+You may delete the folders ```apptainers``` and ```workflow/profiles```, as well as files ```master_spiscy.sh```, ```run_spiscy.sh```, and ```test_spiscy.sh```. 
+
+6. Customize config files.
+
+
+See [Customize configuration settings](#customize-configuration-settings) to adapt the configuration settings to your dataset. 
 
 
 ## Usage
 
 ### Customize configuration settings
 
-Each rule has its own configuration file that should be customized. Each configuration file has extensive comments to help inform choices. The settings are spoken about in detail in the [video](placeholder). 
+Each rule has its own configuration file that should be customized. Each configuration file has extensive comments to help inform choices. Check out the [video](placeholder) for a detailed explanation of all configuration settings. 
 
 > [!IMPORTANT]
-> If using control files, make sure each control file has an identifying word in their filenames. Then make sure to write that control ID in ```config/normalization.yaml```. This setting allows to distinguish between sample and control files. 
+> If using control files, make sure each control file has a unique identifying word in their filename. Then make sure to write that control ID in ```config/normalization.yaml```. This setting allows to distinguish between sample and control files. 
 
 
 
@@ -189,12 +285,19 @@ Each rule has its own configuration file that should be customized. Each configu
 
 #### HPC
 
-1. Navigate to the spiscy folder
-2. Test the pipeline. You might need to change permissions to run the file:
+1. Navigate to the spiscy folder. 
+2. Test the pipeline.
+
+
+You might need to change permissions to run the file:
 ```
 ./test_spiscy.sh
 ```
-3. spiscy can either be run in a login node with:
+
+3. Launch the pipeline. 
+
+
+SPiSCy can either be run in a login node with:
 ```
 ./run_spiscy.sh
 ```
@@ -208,25 +311,25 @@ Either way, SPiSCY will be able to automatically submit its own jobs to SLURM wi
 
 
 If the pipeline failed and shut down, then you need to unlock the spiscy folder before relaunching.
-1. Make sure spiscy is no longer running
-2. Navigate to the spiscy folder
-3. Activate your snakemake environment
+1. Make sure spiscy is no longer running.
+2. Navigate to the spiscy folder.
+3. Activate the Snakemake environment (set in step 3 of installation).
 ```
-source ~/path to your snakemake environment
+source ~/envs/snakemake/bin/activate
 ```
-4. Unlock the directory
+4. Unlock the directory.
 ```
 snakemake -n --unlock
 ```
-5. Relaunch spiscy
+5. Relaunch the pipeline.
 
 
 #### Windows
 
 Preprocessing and differential analysis steps use the rbase container, while clustering steps use the pybase container. According to which steps you want run, you will need to activate the appropriate container, run the chosen rules, then close the container, and move on to the next steps in the other container. 
 
-1. Navigate to the spiscy folder
-2. Compose the appropriate container:
+1. Navigate to the spiscy folder.
+2. Run the appropriate container:
 ```
 docker compose run rbase
 ```
@@ -246,11 +349,14 @@ or
 ```
 conda activate pybase
 ```
-4. Test snakemake
+4. Test the pipeline.
 ```
 snakemake -np
 ```
-5. Run all appropriate rules for the chosen container. -j sets the number of cores. 
+5. Run all appropriate rules for the chosen container.
+
+
+-j sets the number of cores. 
 
 To run all preprocessing steps:
 ```
@@ -268,12 +374,10 @@ To run all differential analysis:
 snakemake -j 1 -p --until diff_analysis
 ``` 
 
-6. Stop the container:
+6. Stop the container. 
 
 ```
 exit
-```
-```
 docker compose down --remove-orphans
 ```
 
@@ -282,7 +386,7 @@ docker compose down --remove-orphans
 
 Each rule produces 2 log files : stderr (errors and warnings) and sdtout (general information). These files are available under results/logs/. Addtionnally, if using HPC, SLURM specific logs are available under results/logs/slurm/. 
 
-Each rule will also produce intermediate results, such as plots, heatmaps and csv files. To make sure every rule worked correctly, please check the results folder. Interpretating these results is spoken about in detail in the [video](placeholder).
+Each rule will also produce intermediate results, such as plots, heatmaps and csv files. To make sure every rule worked correctly, please check the corresponding rule folder in the results folder. Check out the [video](placeholder) for more details about interpretating the results.
 
 
 ## Tools and Documentation

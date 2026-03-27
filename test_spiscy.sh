@@ -8,11 +8,11 @@
 cd /path to spiscy folder
 
 # Load apptainer and python modules
-module load apptainer
+module load apptainer/1.4.5
 module load python/3.11
 
 # Activate Snakemake environment with slurm plugin
-source ~/path to your snakemake environment
+source ~/envs/snakemake/bin/activate
 
 # Define how many jobs to run in parallel
 JOBS=100
