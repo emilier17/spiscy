@@ -1,10 +1,8 @@
 ## Get Started
 
-| Text | Image |
-|------|-------|
-| Read the documentation below, or watch the [SPiSCy Tour video](placeholder) for a detailed walkthrough. | ![Logo](images/logo.png) |
+<img src="images/logo.png" align="right width="250"/>|
 
-
+Read the documentation below, or watch the [SPiSCy Tour video](placeholder) for a detailed walkthrough.
 
 ## Overview
 
