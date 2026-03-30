@@ -187,7 +187,8 @@ Place the following CSV files in ```data``` folder: ```metadata.csv``` and ```ma
 
 ```marker_info.csv``` must contain columns ```marker_name```, ```channel```, and ```marker_class```. In ```marker_class```, indicate if the marker is used for distinguishing stable cell populations (type) or if the marker is used to characterize cells (state). Example:
 
-![marker_info_csv_example](images/marker_info_csv.png)
+<img src="images/marker_info_csv.png" width="250"/>
+
 
 5. Adapt slurm profile and bash scripts. 
 
