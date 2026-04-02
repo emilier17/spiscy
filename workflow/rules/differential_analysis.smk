@@ -6,7 +6,7 @@ rule diff_analysis:
     input:
         markers="results/diff_analysis/markers/",
         labels_dir="results/diff_analysis/labels/{algorithm}",
-        spe_config="config/diff_analysis.yaml",
+        spe_config="config/23_diff_analysis.yaml",
         metadata="data/metadata.csv",
         marker_info="data/marker_info.csv"
     output:

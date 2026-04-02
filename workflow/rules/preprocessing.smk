@@ -8,8 +8,8 @@ container: f"{workflow.basedir}/../apptainers/spiscy_rbase.sif"
 rule prelim_gating:
     input:
         fcs="data/all_raw/{sample}.fcs",
-        general_config="config/general_config.yaml",
-        specific_config="config/prelim_gating.yaml"
+        general_config="config/01_general_config.yaml",
+        specific_config="config/02_prelim_gating.yaml"
     output:
         fcs_out="results/prelim_gating/all_gated/{sample}.fcs",
         gate_plots="results/prelim_gating/gates/{sample}_gates.png"
@@ -30,8 +30,8 @@ if not skip_FlowVS:
     rule predict_cofactors:
         input:
             fcs=expand("results/prelim_gating/all_gated/{sample}.fcs", sample=ALL_FILES),
-            general_config="config/general_config.yaml",
-            specific_config="config/predict_cofactors.yaml"
+            general_config="config/01_general_config.yaml",
+            specific_config="config/03_predict_cofactors.yaml"
         output:
             cofactors_csv="results/transformation/cofactors.csv",
             cofactors_graph="results/transformation/cofactor_bartlett.pdf",
@@ -49,8 +49,8 @@ if not skip_FlowVS:
 rule transformation:
     input:
         fcs=expand("results/prelim_gating/all_gated/{sample}.fcs", sample=ALL_FILES),
-        general_config="config/general_config.yaml",
-        specific_config="config/transformation.yaml",
+        general_config="config/01_general_config.yaml",
+        specific_config="config/04_transformation.yaml",
         cofactors_csv="results/transformation/cofactors.csv" if skip_FlowVS else rules.predict_cofactors.output.cofactors_csv
     output:
         fcs_out=expand("results/transformation/all_transformed/{sample}.fcs", sample=ALL_FILES),
@@ -68,8 +68,8 @@ rule transformation:
 rule secondary_gating:
     input:
         fcs="results/transformation/all_transformed/{sample}.fcs",
-        general_config="config/general_config.yaml",
-        specific_config="config/secondary_gating.yaml"
+        general_config="config/01_general_config.yaml",
+        specific_config="config/05_secondary_gating.yaml"
     output:
         fcs_out="results/secondary_gating/all_final_gated/{sample}.fcs",
         cell_counts=temp("results/secondary_gating/cell_counts/{sample}.csv"),
@@ -107,8 +107,8 @@ rule cleanup_cell_counts:
 rule quality_control:
     input:
         fcs="results/secondary_gating/all_final_gated/{sample}.fcs",
-        general_config="config/general_config.yaml",
-        specific_config="config/QC.yaml"
+        general_config="config/01_general_config.yaml",
+        specific_config="config/06_QC.yaml"
     output:
         fcs_out="results/QC/all_QCed/{sample}.fcs",
         plot="results/QC/PeacoQC_plots/PeacoQC_{sample}.png",
@@ -149,8 +149,8 @@ rule detect_batch_effect_before:
     input:
         fcs=expand("results/QC/all_QCed/{sample}.fcs", sample=ALL_FILES),
         metadata="data/metadata.csv",
-        general_config="config/general_config.yaml",
-        specific_config="config/detect_batch_effect_before.yaml"
+        general_config="config/01_general_config.yaml",
+        specific_config="config/07_detect_batch_effect_before.yaml"
     output:
         umaps=expand("results/detect_batch_effect/before_umap_{condition}.png", condition=exp_conditions_before)
     log:
@@ -171,8 +171,8 @@ if skip_normalization:
     rule create_csv:
             input:
                 fcs="results/QC/all_QCed/{sample}.fcs",
-                general_config="config/general_config.yaml",
-                specific_config="config/create_csv.yaml"
+                general_config="config/01_general_config.yaml",
+                specific_config="config/10_create_csv.yaml"
             output:
                 csv="results/csv/samples_final/{sample}.csv"
             log:
@@ -217,8 +217,8 @@ if not skip_normalization:
         input:
             fcs_sample=expand("results/QC/all_QCed/{sample}.fcs", sample=SAMPLE_FILES),
             fcs_control=expand("results/QC/all_QCed/{sample}.fcs", sample=CONTROL_FILES),
-            general_config="config/general_config.yaml",
-            specific_config="config/normalization.yaml",
+            general_config="config/01_general_config.yaml",
+            specific_config="config/08_normalization.yaml",
             metadata="data/metadata.csv"
         output:
             fcs_out=expand("results/normalization/samples_normalized/{sample}.fcs", sample=SAMPLE_FILES),
@@ -252,7 +252,7 @@ if not skip_normalization:
             fcs_after_norm=expand("results/normalization/samples_normalized/{sample}.fcs", sample=SAMPLE_FILES),
             batches_used="results/normalization/batches_used.txt",
             norm_model="results/normalization/norm_model.rds",
-            specific_config="config/normalization.yaml",
+            specific_config="config/08_normalization.yaml",
             metadata="data/metadata.csv"
         output:
             test_CV="results/normalization/testCV.png",
@@ -274,8 +274,8 @@ if not skip_normalization:
         input:
             fcs=expand("results/normalization/samples_normalized/{sample}.fcs", sample=SAMPLE_FILES),
             metadata="data/metadata.csv",
-            general_config="config/general_config.yaml",
-            specific_config="config/detect_batch_effect_after.yaml"
+            general_config="config/01_general_config.yaml",
+            specific_config="config/09_detect_batch_effect_after.yaml"
         output:
             umaps=expand("results/detect_batch_effect/after_umap_{condition}.png", condition=exp_conditions_after)
         log:
@@ -291,8 +291,8 @@ if not skip_normalization:
     rule create_csv:
         input:
             fcs="results/normalization/samples_normalized/{sample}.fcs",
-            general_config="config/general_config.yaml",
-            specific_config="config/create_csv.yaml"
+            general_config="config/01_general_config.yaml",
+            specific_config="config/10_create_csv.yaml"
         output:
             csv="results/csv/samples_final/{sample}.csv"
         log:

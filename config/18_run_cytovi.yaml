@@ -1,4 +1,4 @@
-sample_size_per_file: 10000
+sample_size_per_file: 9000
 # how many cells to randomly sample form every file to create a smaller data subset to run clustering
 
 clustering_markers: # markers that will be used to separate the cells into clusters

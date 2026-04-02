@@ -7,35 +7,35 @@ import os
 import yaml
 
 # Load per-rule configs to dynamically create input/output in snakemake rules
-with open("config/prelim_gating.yaml") as f:
+with open("config/02_prelim_gating.yaml") as f:
     gate_config = yaml.safe_load(f)
 prelim_gating_sequence = gate_config["gate_chains"]["default"]
 
-with open("config/transformation.yaml") as f:
+with open("config/04_transformation.yaml") as f:
     transformation_config = yaml.safe_load(f)
 MARKERS = transformation_config["markers_to_transform"]
 
-with open("config/secondary_gating.yaml") as f:
+with open("config/05_secondary_gating.yaml") as f:
     secondary_gating_config = yaml.safe_load(f)
 secondary_gating_sequence = secondary_gating_config["gate_chains"]["default"]
 validation_plots = secondary_gating_config["validation_plots"]
 
-with open("config/detect_batch_effect_before.yaml") as f:
+with open("config/07_detect_batch_effect_before.yaml") as f:
     detect_config = yaml.safe_load(f)
 exp_conditions_before = detect_config["experimental_conditions"]
 
-with open("config/detect_batch_effect_after.yaml") as f:
+with open("config/09_detect_batch_effect_after.yaml") as f:
     detect_config = yaml.safe_load(f)
 exp_conditions_after = detect_config["experimental_conditions"]
 
-with open("config/normalization.yaml") as f:
+with open("config/08_normalization.yaml") as f:
     normalization_config = yaml.safe_load(f)
 skip_normalization = normalization_config["skip_normalization"]
 controls_exist = normalization_config["controls_exist"]
 control_ID = normalization_config["control_ID"]
 norm_markers = normalization_config["markers_to_normalize"]
 
-with open("config/clustering.yaml") as f:
+with open("config/12_clustering.yaml") as f:
     clustering_config = yaml.safe_load(f)
 clustering_algos = clustering_config["algorithms"]
 clustering_levels = clustering_config["clustering_levels"]

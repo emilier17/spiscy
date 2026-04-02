@@ -10,10 +10,10 @@ container: f"{workflow.basedir}/../apptainers/spiscy_pybase.sif"
 rule run_flowsom:
     input:
         csv="results/csv/final_samples.csv",
-        clustering_config="config/run_flowsom.yaml",
-        sampling_config="config/clustering_sampling.yaml",
-        label_prop_config="config/cluster_label_propagation.yaml",
-        dr_config="config/dim_reduction.yaml"
+        clustering_config="config/15_run_flowsom.yaml",
+        sampling_config="config/13_clustering_sampling.yaml",
+        label_prop_config="config/14_cluster_label_propagation.yaml",
+        dr_config="config/11_dim_reduction.yaml"
     output:
         model="results/clustering/flowsom/flowsom_model.pkl",
         clusters="results/clustering/flowsom/clusters.csv",
@@ -31,10 +31,10 @@ rule run_flowsom:
 rule run_phenograph:
     input:
         csv="results/csv/final_samples.csv",
-        clustering_config="config/run_phenograph.yaml",
-        sampling_config="config/clustering_sampling.yaml",
-        label_prop_config="config/cluster_label_propagation.yaml",
-        dr_config="config/dim_reduction.yaml"
+        clustering_config="config/16_run_phenograph.yaml",
+        sampling_config="config/13_clustering_sampling.yaml",
+        label_prop_config="config/14_cluster_label_propagation.yaml",
+        dr_config="config/11_dim_reduction.yaml"
     output:
         model="results/clustering/phenograph/phenograph_model.pkl",
         clusters="results/clustering/phenograph/clusters.csv"
@@ -51,10 +51,10 @@ rule run_phenograph:
 rule run_parc:
     input:
         csv="results/csv/final_samples.csv",
-        clustering_config="config/run_parc.yaml",
-        sampling_config="config/clustering_sampling.yaml",
-        label_prop_config="config/cluster_label_propagation.yaml",
-        dr_config="config/dim_reduction.yaml"
+        clustering_config="config/17_run_parc.yaml",
+        sampling_config="config/13_clustering_sampling.yaml",
+        label_prop_config="config/14_cluster_label_propagation.yaml",
+        dr_config="config/11_dim_reduction.yaml"
     output:
         model="results/clustering/parc/parc_model.pkl",
         clusters="results/clustering/parc/clusters.csv"
@@ -71,9 +71,9 @@ rule run_parc:
 rule run_cytovi:
     input:
         csv="results/csv/final_samples.csv",
-        clustering_config="config/run_cytovi.yaml",
-        sampling_config="config/clustering_sampling.yaml",
-        label_prop_config="config/cluster_label_propagation.yaml",
+        clustering_config="config/18_run_cytovi.yaml",
+        sampling_config="config/13_clustering_sampling.yaml",
+        label_prop_config="config/14_cluster_label_propagation.yaml",
         metadata="data/metadata.csv"
     output:
         model="results/clustering/cytovi/cytovi_model.pkl",
@@ -92,10 +92,10 @@ rule run_cytovi:
 rule run_hdbscan:
     input:
         csv="results/csv/final_samples.csv",
-        clustering_config="config/run_hdbscan.yaml",
-        sampling_config="config/clustering_sampling.yaml",
-        label_prop_config="config/cluster_label_propagation.yaml",
-        dr_config="config/dim_reduction.yaml"
+        clustering_config="config/19_run_hdbscan.yaml",
+        sampling_config="config/13_clustering_sampling.yaml",
+        label_prop_config="config/14_cluster_label_propagation.yaml",
+        dr_config="config/11_dim_reduction.yaml"
     output:
         model="results/clustering/hdbscan/hdbscan_model.pkl",
         clusters="results/clustering/hdbscan/clusters.csv",
@@ -112,10 +112,10 @@ rule run_hdbscan:
 rule run_birch:
     input:
         csv="results/csv/final_samples.csv",
-        clustering_config="config/run_birch.yaml",
-        sampling_config="config/clustering_sampling.yaml",
-        label_prop_config="config/cluster_label_propagation.yaml",
-        dr_config="config/dim_reduction.yaml"
+        clustering_config="config/20_run_birch.yaml",
+        sampling_config="config/13_clustering_sampling.yaml",
+        label_prop_config="config/14_cluster_label_propagation.yaml",
+        dr_config="config/11_dim_reduction.yaml"
     output:
         model="results/clustering/birch/birch_model.pkl",
         clusters="results/clustering/birch/clusters.csv",
@@ -134,7 +134,7 @@ rule evaluate_clustering:
         clusters="results/clustering/{algorithm}/clusters.csv",
         metadata="data/metadata.csv",
         markers="results/csv/final_samples.csv",
-        specific_config="config/evaluate_clustering.yaml",
+        specific_config="config/21_evaluate_clustering.yaml",
         model="results/clustering/{algorithm}/{algorithm}_model.pkl"
     output:
         batch_contribution_png="results/clustering/{algorithm}/QC/{level}/batch_contribution.png",
@@ -165,7 +165,7 @@ if len(clustering_algos) > 1:
     rule compare_clustering:
         input:
             markers="results/csv/final_samples.csv",
-            specific_config="config/compare_clustering.yaml",
+            specific_config="config/22_compare_clustering.yaml",
             clusters_csvs=expand("results/clustering/{algorithm}/clusters.csv", algorithm=clustering_algos),
             median_marker_csvs=median_marker_csvs
         output:
