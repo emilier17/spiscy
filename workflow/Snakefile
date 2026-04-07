@@ -133,6 +133,5 @@ rule all:
         expand("results/clustering/{algorithm}/{algorithm}_model.pkl", algorithm=clustering_algos),
         clustering_qc_targets,
         compare_clustering_target,
-        "results/diff_analysis/markers",
         expand("results/diff_analysis/labels/{algorithm}", algorithm=clustering_algos),
         diff_analysis_targets

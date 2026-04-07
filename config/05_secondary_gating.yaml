@@ -7,7 +7,7 @@ gates:
   CD3: # must be same as in the list of gate_chains
     filterId: "CD3" # must be same as in the list of gate_chains
     mk1: "CD3" # must correspond to alias in channel_alias_map (general_config.yaml)
-    type: "rectangle" # gate type (options from flowcore are rectangle, polygon, ellipsoid, polytope, and quad)
+    type: "rectangle" # gate type (options are rectangle or polygon)
     coords:
       mk1: [1.5, 4.5] # transformed values
   CD4:

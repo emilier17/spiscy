@@ -9,9 +9,9 @@ gates:
     filterId: "debris" # same name as in gate_chains
     mk1: "FSC-A" # must correspond to alias in channel_alias_map (general_config.yaml)
     mk2: "SSC-A" # optional second marker to plot
-    type: "rectangle" # gate type (options from flowcore are rectangle, polygon, ellipsoid, polytope, and quad)
+    type: "rectangle" # gate type (options are rectangle or polygon)
     coords:
-      mk1: [100000, 250000] # 
+      mk1: [100000, 250000] # see the graphs used by the cytometer (or other program) to know what coordinates to use
       mk2: [25000, 150000]
   
   singlets:

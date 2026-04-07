@@ -313,7 +313,7 @@ or submitted as a job with:
 sbatch master_spiscy.sh
 ```
 
-Either way, SPiSCY will be able to automatically submit its own jobs to SLURM with automatic resource calculations. Running SPiSCY as a job itself allows SPiSCy to continue running if you are disconnected from the login node. 
+Either way, SPiSCy will be able to automatically submit its own jobs to SLURM with automatic resource calculations. Running SPiSCy as a job itself allows SPiSCy to continue running if you are disconnected from the login node. 
 
 
 If the pipeline failed and shut down, then you need to unlock the spiscy folder before relaunching.
@@ -435,4 +435,4 @@ Differential analysis (R 4.4.0)
 
 ## Acknowledgments
 
-SPiSCY logo: Éloïse Blais ([portfolio](https://www.artstation.com/esiole))
+SPiSCy logo: Éloïse Blais ([portfolio](https://www.artstation.com/esiole))

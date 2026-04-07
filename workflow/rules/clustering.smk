@@ -1,7 +1,7 @@
 from scripts.resources import (
     min_per_mb, mem_for_csv, mins_birch, mins_cytovi, mins_flowsom, mins_hdbscan,
     mins_parc, mins_phenograph, mins_evaluate_clustering, mins_compare_clustering,
-    mins_split_samples, mins_split_clusters
+    mins_split_clusters
     )
 
 container: f"{workflow.basedir}/../apptainers/spiscy_pybase.sif"
@@ -179,22 +179,6 @@ if len(clustering_algos) > 1:
             runtime=mins_compare_clustering
         script:
             "../scripts/compare_clustering.py"
-
-
-rule split_markers_by_filename:
-    input:
-        markers="results/csv/final_samples.csv"
-    output:
-        outdir=directory("results/diff_analysis/markers")
-    log:
-        stdout="results/logs/diff_analysis/input/split_markers.stdout",
-        stderr="results/logs/diff_analysis/input/split_markers.stderr"
-    threads:1
-    resources:
-        mem_mb=mem_for_csv,
-        runtime=mins_split_samples
-    script:
-        "../scripts/split_markers_by_filename.py"
 
 rule split_clusters_by_filename:
     input:
