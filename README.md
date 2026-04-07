@@ -1,4 +1,4 @@
-<img src="images/banner.png" width="200"/>
+<img src="images/banner.png" width="600"/>
 
 
 ## Get Started
