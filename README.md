@@ -7,7 +7,6 @@
 Read the documentation below, or watch the [SPiSCy Tour video](https://www.youtube.com/watch?v=hjNMafwgiuc) for a detailed walkthrough.
 
 - [Overview](#overview)
-- [Features](#features)
 - [Implementation](#implementation)
 - [Limits](#limits)
 - [Requirements](#requirements)
@@ -396,7 +395,7 @@ Each rule will also produce intermediate results, such as plots, heatmaps and cs
 This is a list of the main packages and their documentations. 
 
 
-[Snakemake](https://snakemake.readthedocs.io/en/stable/). 
+[Snakemake](https://snakemake.readthedocs.io/en/stable/) 
 
 
 Preprocessing (R 4.4.0)
