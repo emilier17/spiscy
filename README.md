@@ -4,44 +4,34 @@
 ## Get Started
 
 
-Read the documentation below, or watch the [SPiSCy Tour video](placeholder) for a detailed walkthrough.
+Read the documentation below, or watch the [SPiSCy Tour video](https://www.youtube.com/watch?v=hjNMafwgiuc) for a detailed walkthrough.
+
+- [Overview](#overview)
+- [Features](#features)
+- [Implementation](#implementation)
+- [Limits](#limits)
+- [Requirements](#requirements)
+- [Installation and Setup](#installation-and-setup)
+    - [HPC](#hpc)
+    - [Windows](#windows)
+- [Usage](#usage)
+    - [Configuration files](#customize-configuration-settings)
+    - [Lauch](#launch-the-pipeline)
+    - [Monitor](#monitor-the-pipeline-log-files-and-intermediate-results)
+- [Tools and documentation](#tools-and-documentation)
+- [Acknowledgments](#acknowledgments)
+
 
 ## Overview
 
-SPiSCy (**S**nakemake **Pi**peline for **S**pectral **Cy**tometry) is a bioinformatic pipeline to fully analyze large spectral flow cytometry datasets. SPiSCy aims to be:
-- Flexible, by having extensive custom configuration
-- Reproducible, by having detailed logs
-- Complete, by starting from raw FCS files and performing all steps for a full analysis
-- Automatic, by using the workflow management system Snakemake
+SPiSCy (**S**nakemake **Pi**peline for **S**pectral **Cy**tometry) is a bioinformatic pipeline to fully analyze large spectral flow cytometry datasets.
 
-
-## Features
-
-Starting with FCS files from the cytometer, SPiSCy performs:
-- Data preprocessing (gating, transformation, QC, normalization)
-- Dimensionality reduction (choice of 5 methods - PCA, KernelPCA, Isomap, FastICA, or direct markers)
-- Clustering (choice of 6 methods - FlowSOM, PARC, PhenoGraph, BIRCH, CytoVI, or HDBSCAN)
-- Comparaison between clustering results
-- Differential analysis (abundance and marker expression)
-
-All steps produce intermediate results and detailed log files that allow you to monitor the progress and success of each step.
-
-
-SPiSCy can handle different experimental setups via its customizable configuration files:
-- Large datasets, up to millions of cells and several markers
-- Different types of files, like samples and controls
-
-
-SPiSCy can be run on Windows or HPC infracstructure. If using HPC, jobs and resource requests are automatically handled.  
+<img src="images/overview.jpg">
 
 
 ## Implementation
 
 SPiSCy is written in R and Python and uses Snakemake to automate the workflow. Apptainer is used as the container system for HPC infrastructure. Docker is used for the Windows compatible version. 
-
-
-Snakemake works by setting up rules that define how to create output files from input files. For more information about how Snakemake works, please see the official [documentation](https://snakemake.readthedocs.io/en/stable/). 
-
 
 SPiSCy is organized as follows:
 
@@ -66,40 +56,36 @@ SPiSCy is organized as follows:
     └── test_spiscy.sh  <-- bash script for HPC environment
 ```
 
-## Workflow
-
-This is the SPiSCy rulegraph, or what happens in what order to go from raw FCS files to final results (all). 
-
-![Rulegraph](images/rulegraph.jpg)
-
 
 ## Limits
 
-**Coding knowledge.** While SPiSCy is designed to be mostly automatic, you will still need to use the command line to install and run SPiSCy. You will also need to be able to modify yaml files to customize configuration settings. These steps are explained in the [Installation](#installation-and-setup) and [Usage](#usage) sections, as well as the [video](placeholder). 
+
+### Command line
+While SPiSCy is designed to be mostly automatic, you will still need to use the command line to install and run SPiSCy. You will also need to be able to modify yaml files to customize configuration settings. These steps are explained in the [Installation](#installation-and-setup) and [Usage](#usage) sections, as well as the [video](https://www.youtube.com/watch?v=hjNMafwgiuc). 
 
 
-**Biological knowledge.** Technical knowledge about cytometry and biological knowledge about the dataset is required to use SPiSCy. 
-
-Preprocessing steps:
+### Cytometry and biology
+Technical knowledge about cytometry and biological knowledge about the dataset is required to use SPiSCy. 
 - Gating: select the cells of interest using typical bi-marker plots
 - Transformation: know the typical distributions of the markers in your panel
 - Batch correction: evaluate how batch correction affected marker distribution
-
-Clustering steps:
 - Clustering: test different dimensionality reduction and clustering parameters to find most ideal settings for your dataset
 - Evaluation: annotate clusters based on markers, interpret the biological coherence of identified clusters
 
 
-**Data and preprocessing quality.** Clustering and differential analysis quality is highly dependent on the quality of the raw data and the configuration choices made during the preprocessing steps. To ensure optimal cytometry quality, please follow the [best practices](https://www.thermofisher.com/ca/en/home/references/newsletters-and-journals/bioprobes-journal-of-cell-biology-applications/bioprobes-79/best-practices-multiparametric-flow-cytometry.html). To ensure preprocessing quality, please verify and validate the intermediate results produced by each preprocessing step. For more detail on how to monitor the pipeline, please see the [Monitor the pipeline](#monitor-the-pipeline-log-files-and-intermediate-results) section, or the [video](placeholder). 
+### Data and preprocessing quality
+Clustering and differential analysis quality is highly dependent on the quality of the FCS files and the configuration choices made during the preprocessing steps. To ensure optimal cytometry quality, please follow the [best practices](https://www.thermofisher.com/ca/en/home/references/newsletters-and-journals/bioprobes-journal-of-cell-biology-applications/bioprobes-79/best-practices-multiparametric-flow-cytometry.html). To ensure preprocessing quality, please verify and validate the intermediate results produced by each preprocessing step. For more detail on how to monitor the pipeline, please see the [Monitor the pipeline](#monitor-the-pipeline-log-files-and-intermediate-results) section, or the [video](https://www.youtube.com/watch?v=hjNMafwgiuc). 
 
 
-**Tool assumptions.** Every method used in SPiSCy has its own set of assumptions about the data. If you want to make sure the methods are adapted to your data, please see each tool's documentation in [Tools and documentation](#tools-and-documentation). 
+### Tool assumptions
+Every method used in SPiSCy has its own set of assumptions about the data. If you want to make sure the methods are adapted to your data, please see each tool's documentation in [Tools and documentation](#tools-and-documentation). 
 
 
 
 ## Requirements
 
-**Computing.** For large datasets (tens of millions of cells), an HPC infrastructure is ideal to run SPiSCy. The total number of cells is the most important variable for memory usage. Here is an example of resources used on HPC to analyze a dataset with 32 million cells and 17 markers (215 FCS files). 
+### Computing
+For large datasets (tens of millions of cells), an HPC infrastructure is ideal to run SPiSCy.Here is an example of resources used on HPC to analyze a dataset with 32 million cells and 17 markers (215 FCS files). 
 
 
 Preprocessing
@@ -109,13 +95,22 @@ Preprocessing
 
 
 Clustering
-- Time varies per dimensionality reduction and clustering method. The execution times here include PCA dimensionality reduction, clustering and label propagagtion. 
-    - FlowSOM: 10 min (clustering 13 million cells)
-    - BIRCH: 14 min (clustering 13 million cells)
-    - PARC: 25 min (clustering 950 000 cells)
-    - PhenoGraph: 2h08 (clustering 955 000 cells)
-    - CytoVI: 4h19 (clustering 855 000 cells)
-    - HDBSCAN: 1h37 (clustering 855 000 cells)
+
+Time varies per dimensionality reduction and clustering method. The execution times here include PCA dimensionality reduction, clustering and label propagagtion. 
+- For 100 000 cells:
+    - FlowSOM: 00:00:05
+    - BIRCH: 00:00:06
+    - PARC: 00:00:36
+    - PhenoGraph: 00:02:22
+    - CytoVI: 00:14:30
+    - HDBSCAN: 00:00:58
+- For 1 000 000 cells:
+    - FlowSOM: 00:00:17
+    - BIRCH: 00:00:41
+    - PARC: 00:05:56
+    - PhenoGraph: 01:52:01
+    - CytoVI: 01:51:39
+    - HDBSCAN: 01:45:20
 - Highest memory usage: 64 GB
 - CPUs: 8
 
@@ -126,7 +121,8 @@ Differential analysis
 - Number of CPUs: 8
 
 
-**Differential analysis.** Requires a minimum amount of samples per condition tested. A warning will be emitted if there are too few samples for a particular statistical test. 
+### Differential analysis
+Requires a minimum amount of samples per condition tested. A warning will be emitted if there are too few samples for a particular statistical test. 
 
 
 
@@ -280,7 +276,7 @@ See [Customize configuration settings](#customize-configuration-settings) to ada
 
 ### Customize configuration settings
 
-Each rule has its own configuration file that should be customized. Each configuration file has extensive comments to help inform choices. Check out the [video](placeholder) for a detailed explanation of all configuration settings. 
+Each rule has its own configuration file that should be customized. Each configuration file has extensive comments to help inform choices. Check out the [video](https://www.youtube.com/watch?v=hjNMafwgiuc) for a detailed explanation of all configuration settings. 
 
 > [!IMPORTANT]
 > If using control files, make sure each control file has a unique identifying word in their filename. Then make sure to write that control ID in ```config/normalization.yaml```. This setting allows to distinguish between sample and control files. 
@@ -392,12 +388,15 @@ docker compose down --remove-orphans
 
 Each rule produces 2 log files : stderr (errors and warnings) and sdtout (general information). These files are available under results/logs/. Addtionnally, if using HPC, SLURM specific logs are available under results/logs/slurm/. 
 
-Each rule will also produce intermediate results, such as plots, heatmaps and csv files. To make sure every rule worked correctly, please check the corresponding rule folder in the results folder. Check out the [video](placeholder) for more details about interpretating the results.
+Each rule will also produce intermediate results, such as plots, heatmaps and csv files. To make sure every rule worked correctly, please check the corresponding rule folder in the results folder. Check out the [video](https://www.youtube.com/watch?v=hjNMafwgiuc) for more details about interpretating the results.
 
 
 ## Tools and Documentation
 
 This is a list of the main packages and their documentations. 
+
+
+[Snakemake](https://snakemake.readthedocs.io/en/stable/). 
 
 
 Preprocessing (R 4.4.0)
