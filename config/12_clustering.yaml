@@ -2,7 +2,6 @@ algorithms: # choose which clustering algorithms will be run on data. Can be jus
 # options are : 'flowsom', 'phenograph', 'parc', 'cytovi', 'hdbscan', 'birch'
   - "phenograph"
   - "flowsom"
-  - "phenograph"
   - "parc"
   - "cytovi"
   - "hdbscan"

@@ -19,6 +19,7 @@ Read the documentation below, or watch the [SPiSCy Tour video](https://www.youtu
     - [Monitor](#monitor-the-pipeline-log-files-and-intermediate-results)
 - [Tools and documentation](#tools-and-documentation)
 - [Acknowledgments](#acknowledgments)
+- [Supplementary data](#supplementary-data)
 
 
 ## Overview
@@ -434,3 +435,9 @@ Differential analysis (R 4.4.0)
 ## Acknowledgments
 
 SPiSCy logo: Éloïse Blais ([portfolio](https://www.artstation.com/esiole))
+
+
+## Supplementary data
+
+Test data (produced during ATARI trial - [DOI](10.3389/fmed.2023.1198173)) [zenodo](https://doi.org/10.5281/zenodo.20413724)
+Source code for figure 1C and additionnal results [GitHub](https://github.com/emilier17/spiscy_supp)

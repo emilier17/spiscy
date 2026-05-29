@@ -2,8 +2,11 @@
 # been assigned to a cluster
 #
 # Label propagation allows to assign unsampled cells to a cluster
-# Based off NearestNeigbhor model and majority vote
+# Based off NearestNeigbhor model (sklearn) and majority vote
 # Unlabeled cells first undergo the same dimensionality reduction as the sampled cells
+
+# FlowSOM and BIRCH have their own functionnality for mapping new data. 
+# The NeareastNeighbor label propagation is used for PARC, HDBSCAN, CytoVI, and PhenoGraph.
 
 nb_neighbors: 10 # how many cell neighbors should be considered for NearestNeighbor model
 # typically between 5 - 30. Smaller values preserve rare populations better
