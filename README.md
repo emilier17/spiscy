@@ -439,5 +439,7 @@ SPiSCy logo: Éloïse Blais ([portfolio](https://www.artstation.com/esiole))
 
 ## Supplementary data
 
-Test data (produced during ATARI trial - [DOI](10.3389/fmed.2023.1198173)) [zenodo](https://doi.org/10.5281/zenodo.20413724)
-Source code for figure 1C and additionnal results [GitHub](https://github.com/emilier17/spiscy_supp)
+Test data (produced during ATARI trial - [DOI](https://doi.org/10.3389/fmed.2023.1198173)): [zenodo](https://doi.org/10.5281/zenodo.20413724)
+
+
+Source code for figure 1C and additionnal results: [GitHub](https://github.com/emilier17/spiscy_supp)
