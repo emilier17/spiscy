@@ -282,6 +282,7 @@ def transform_dr(method_choice, input_df, reducer, chunksize, clustering_markers
     if method == "direct_markers":
         print(f"Dimensionality reduction via {method_choice} with {clustering_markers}", flush=True)
         small_reduced_df = input_df[clustering_markers].copy()
+        small_reduced_df = small_reduced_df.astype("float32")
         reduced_columns = clustering_markers
         return small_reduced_df, reduced_columns
 
