@@ -462,11 +462,14 @@ def mins_diff_analysis(wildcards, input, threads=1, attempt=1):
         number of cells to run umap on (in evaluate_clustering.yaml)
         number of markers (# columns in csv file - 1)
     """
-    total_nb_cells = count_rows_dir(input["markers"])
-    first_csv = sorted(glob.glob(os.path.join(input["markers"], "*.csv")))[0]
+    marker_files = list(input["markers"])
+    total_nb_cells = sum(count_rows_csv(f) for f in marker_files)
+   
+    first_csv = marker_files[0]
     nb_markers = count_columns_csv(first_csv) - 1
+    
     sample_size = int(EVAL_CLUSTER_CONFIG["sample_size_umap"])
-    nb_files = count_sample_csv_files()
+    nb_files = len(marker_files)
     nb_cells_to_umap = sample_size * nb_files
 
     cell_unit = 1_000_000

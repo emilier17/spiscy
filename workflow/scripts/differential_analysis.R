@@ -6,7 +6,7 @@
 # Package: diffcyt
 # 
 # Author: Émilie Roy
-# Date: Feb 2026
+# Date: June 2026
 # Version: v.1.0
 #
 # Input : marker values for each sample (.csv) + cluster labels for each cell in the sample (.csv)
@@ -42,7 +42,7 @@ library(diffcyt)
 library(SummarizedExperiment)
 
 # Snakemake inputs
-markers_dir = snakemake@input[["markers"]]
+markers_csvs = snakemake@input[["markers"]]
 labels_dir = snakemake@input[["labels_dir"]]
 spe_config_file = snakemake@input[["spe_config"]]
 metadata_csv = snakemake@input[["metadata"]]
@@ -74,17 +74,48 @@ cat("Clustering key:", clustering_level, "\n")
 ####################################
 
 ## List of dataframes containing marker values
-markers_csvs = list.files(markers_dir, full.names=TRUE)
 markers_list = lapply(markers_csvs, read.csv, stringsAsFactors = FALSE)
 names(markers_list) = gsub("\\.csv$", "", basename(markers_csvs))
 cat("Found", length(markers_list), "sample files", "\n")
 
+
 ## List of dataframes container cluster labels
-labels_csvs = list.files(labels_dir, full.names=TRUE)
+labels_csvs = list.files(labels_dir, pattern="\\.csv$", full.names=TRUE)
 cat("Found", length(labels_csvs), "cluster label files found", "\n")
 
 labels_list = lapply(labels_csvs, read.csv, stringsAsFactors = FALSE)
 names(labels_list) = gsub("\\.csv$", "", basename(labels_csvs))
+
+# Make sure file order in the same in markers_list and labels_list
+missing_labels = setdiff(names(markers_list), names(labels_list))
+missing_markers = setdiff(names(labels_list), names(markers_list))
+
+if (length(missing_labels) > 0 || length(missing_markers) > 0) {
+    stop(
+        "Mismatch between marker files and label files.\n",
+        "Missing label files for: ", paste(missing_labels, collapse = ", "), "\n",
+        "Missing marker files for: ", paste(missing_markers, collapse = ", ")
+    )
+}
+
+cat("First 10 marker samples:\n")
+print(names(markers_list)[1:10])
+
+cat("First 10 labels samples:\n")
+print(names(labels_list)[1:10])
+
+
+
+labels_list = labels_list[names(markers_list)]
+invisible(labels_list) # prevent printout of dataframes
+
+if (!identical(names(markers_list), names(labels_list))) {
+    stop("Failed to reorder labels_list to match markers_list")
+}
+
+cat("First 10 label samples after reorder:\n")
+print(names(labels_list)[1:10])
+
 
 ## Experiment_info df : metadata about the experiment
 exp_info_df = read.csv(metadata_csv, header=TRUE)
@@ -101,7 +132,7 @@ metadata_cols = colnames(exp_info_df_min)
 
 cat("[TABLE PREVIEW] Imported metadata table:", "\n")
 print(head(exp_info_df_min))
-
+cat("Number of rows:", nrow(exp_info_df_min), "\n")
 
 # Set all categorical variables as factors
 cat("Setting these variables to categorical:", cat_variables, "\n")
@@ -115,6 +146,7 @@ for (col in cat_variables) {
 if (length(markers_csvs) != nrow(exp_info_df_min)) {
   stop("Not all input samples have been found in metadata. Is there a filename mismatch?")
 }
+
 
 ## Marker_info df : information about markers used in experiment
 marker_info_df = read.csv(marker_info_csv, header=TRUE)
@@ -130,29 +162,41 @@ print(marker_info_df)
 
 
 
-
 #############################
 #### CHECK ROW ALIGNMENT ####
 #############################
 
 # Make sure cells are in the same order for marker data / cluster labels
-check_row_alignment = mapply(function(marker_df, label_df, nm) {
-  if (!("row_id" %in% colnames(marker_df))) {
-    stop(paste("row_id missing in markers for sample:", nm))
-  }
-  if (!("row_id" %in% colnames(label_df))) {
-    stop(paste("row_id missing in labels for sample:", nm))
-  }
-  
-  res = all.equal(marker_df$row_id, label_df$row_id)
-  
-  if (!isTRUE(res)) {
-    stop(paste("Row order mismatch detected in sample:", nm))
-  }
-  TRUE
-}, markers_list, labels_list, names(markers_list))
+for (nm in names(markers_list)) {
+
+    marker_df <- markers_list[[nm]]
+    label_df <- labels_list[[nm]]
+
+    if (!("row_id" %in% colnames(marker_df))) {
+        stop(paste("row_id missing in markers for sample:", nm))
+    }
+
+    if (!("row_id" %in% colnames(label_df))) {
+        stop(paste("row_id missing in labels for sample:", nm))
+    }
+
+    marker_row_id <- as.character(marker_df$row_id)
+    label_row_id <- as.character(label_df$row_id)
+
+    if (!identical(marker_df$row_id, label_df$row_id)) {
+
+        cat("Marker row_id head:\n")
+        print(head(marker_df$row_id))
+
+        cat("Label row_id head:\n")
+        print(head(label_df$row_id))
+
+        stop(paste("Row order mismatch detected in sample:", nm))
+    }
+}
 
 cat("Row order between labels and cells matches for all samples", "\n")
+
 
 # Remove row_id (necessary for diffcyt) if row order matches
 markers_list = lapply(markers_list, function(df) {

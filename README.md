@@ -409,7 +409,7 @@ Preprocessing (R 4.4.0)
 - [umap](https://github.com/tkonopka/umap) 0.2.10.0
 
 
-Clustering (python 3.11.14)
+Clustering and Dimensionality Reduction (python 3.11.14)
 - [flowsom](https://flowsom.readthedocs.io/en/latest/) 0.2.2
 - [matplotlib](https://matplotlib.org/) 3.10.8
 - [numpy](https://numpy.org/) 2.3.5
@@ -419,6 +419,10 @@ Clustering (python 3.11.14)
 - scikit-learn 1.8.0
     - [hdbscan](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.HDBSCAN.html)
     - [birch](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.Birch.html)
+    - [PCA](https://scikit-learn.org/1.8/modules/generated/sklearn.decomposition.PCA.html)
+    - [KernelPCA](https://scikit-learn.org/1.8/modules/generated/sklearn.decomposition.KernelPCA.html)
+    - [FastICA](https://scikit-learn.org/1.8/modules/generated/fastica-function.html)
+    - [Isomap](https://scikit-learn.org/1.8/modules/generated/sklearn.manifold.Isomap.html)
 - [seaborn](https://seaborn.pydata.org/) 0.13.2
 - scvi-tools 1.4.1
     - [cytovi](https://docs.scvi-tools.org/en/1.4.1/user_guide/models/cytovi.html)
@@ -442,4 +446,4 @@ SPiSCy logo: Éloïse Blais ([portfolio](https://www.artstation.com/esiole))
 Test data (produced during ATARI trial - [DOI](https://doi.org/10.3389/fmed.2023.1198173)): [zenodo](https://doi.org/10.5281/zenodo.20413724)
 
 
-Source code for figure 1C and additionnal results: [GitHub](https://github.com/emilier17/spiscy_supp)
+Video tutorial: [YouTube](https://www.youtube.com/watch?v=hjNMafwgiuc)

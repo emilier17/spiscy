@@ -169,7 +169,12 @@ if len(clustering_algos) > 1:
             clusters_csvs=expand("results/clustering/{algorithm}/clusters.csv", algorithm=clustering_algos),
             median_marker_csvs=median_marker_csvs
         output:
-            summary="results/clustering/clustering_comparaison.pdf"
+            summary="results/clustering/comparison/summary.pdf",
+            struc_metrics="results/clustering/comparison/structural_metrics.csv",
+            cs_all="results/clustering/comparison/cosine_similarity_all_markers.csv",
+            cs_cluster="results/clustering/comparison/cosine_similarity_clustering_markers.csv",
+            ari="results/clustering/comparison/ari.csv",
+            ami="results/clustering/comparison/ami.csv"
         log:
             stdout="results/logs/clustering/compare_clustering.stdout",
             stderr="results/logs/clustering/compare_clustering.stderr"

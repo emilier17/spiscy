@@ -14,7 +14,7 @@
 
 from clustering_utils import (
     snakemake_logs, start_time, end_time, elapsed_time, compute_clustering_metrics, 
-    check_pos_int_not_null
+    check_pos_int_not_null, print_save_msg
     )
 
 snakemake_logs(snakemake)
@@ -50,6 +50,11 @@ marker_median_csvs = snakemake.input["median_marker_csvs"]
 
 # Outputs
 summary_pdf = snakemake.output[0]
+metrics_csv = snakemake.output[1]
+cs_all_csv = snakemake.output[2]
+cs_cluster_csv = snakemake.output[3]
+ari_csv = snakemake.output[4]
+ami_csv = snakemake.output[5]
 
 # Config files
 with open(spe_config) as f:
@@ -133,7 +138,7 @@ cluster_sizes_df = pd.DataFrame(cluster_size_rows)
 # Adjusted Rand Index. [-0.5 to 1]. 1 indicates identical assignment 
 # Adjusted Mutual Information. [0 to 1]. 1 indicates identical assignment
 
-print("Clustering agreement: calculating ARI and AMI...", flush=True)
+print(f"Clustering agreement: estimatating ARI and AMI using sample size={sample_size_agreement}", flush=True)
 
 # Calculate ARI and AMI score for each combination of methods (pairwise comparaison)
 methods = sorted(clustering_results.keys())
@@ -164,7 +169,10 @@ for m1, m2 in method_pairs:
     ami_matrix.loc[m1, m2] = ami
     ami_matrix.loc[m2, m1] = ami
 
-
+ari_matrix.to_csv(ari_csv)
+print_save_msg(ari_csv, "ari_csv")
+ami_matrix.to_csv(ami_csv)
+print_save_msg(ami_csv, "ami_csv")
 
 
 
@@ -178,7 +186,8 @@ for m1, m2 in method_pairs:
 # Calinski-Harabasz Index: how dense and well separated are clusters. Higher is better
 # Davies-Bouldin: how well separated clusters are. 0 is lowest score. Lower is better
 
-print("Structural metrics: calculating Silhouette Coefficient, Calinski-Harabasz Index, and Davies-Bouldin score...", flush=True)
+print("Structural metrics: calculating Silhouette Score, Calinski-Harabasz Index, and Davies-Bouldin score...", flush=True)
+print(f"Sample size for estimating Silhouette Score: {sample_size_silhouette}", flush=True)
 
 samples = pd.read_csv(samples_csv)
 X = samples[clustering_markers]
@@ -197,6 +206,9 @@ for method, results in clustering_results.items():
 
 metrics_df = pd.DataFrame(rows).set_index("method")
 raw_metrics_df = metrics_df.copy()
+
+raw_metrics_df.to_csv(metrics_csv)
+print_save_msg(metrics_csv, "structural_metrics.csv")
 
 # inverse davies bouldin metric (OG: smaller is better) to match other metrics evaluation (bigger is better)
 metrics_df["davies_bouldin_inv"] = 1 / metrics_df["davies_bouldin"]
@@ -264,10 +276,19 @@ cosine_sims_all = pd.DataFrame(
     columns=cluster_ids_filtered
 )
 
+cosine_sims_cluster.to_csv(cs_cluster_csv)
+print_save_msg(cs_cluster_csv, "cosine_similarity_clustering_markers.csv")
+cosine_sims_all.to_csv(cs_all_csv)
+print_save_msg(cs_all_csv, "cosine_similarity_all_markers.csv")
+
+
 # PCA on the median markers and plotting top 2 components
 pca = PCA(n_components=2)
 X_all_pca = pca.fit_transform(X_all)
+print(f"Percentage of variance explained by each of the PCA components (using all markers): {pca.explained_variance_ratio_}", flush=True)
+
 X_cluster_pca = pca.fit_transform(X_cluster)
+print(f"Percentage of variance explained by each of the PCA components (using clustering markers): {pca.explained_variance_ratio_}", flush=True)
 
 all_medians_df["PC1_all"] = X_all_pca[:,0]
 all_medians_df["PC2_all"] = X_all_pca[:,1]
@@ -312,7 +333,6 @@ with PdfPages(summary_pdf) as pdf:
 
     #-- Page 2: Barplots with raw metric values
     for metric in raw_metrics_df.columns:
-        print(metric)
         fig, ax = plt.subplots(figsize=(6, 4))
         sns.barplot(
             x=raw_metrics_df.index,

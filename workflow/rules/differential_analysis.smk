@@ -4,7 +4,7 @@ container: f"{workflow.basedir}/../apptainers/spiscy_rbase.sif"
 
 rule diff_analysis:
     input:
-        markers="results/csv/samples_final/",
+        markers=expand("results/csv/samples_final/{sample}.csv", sample=SAMPLE_FILES),
         labels_dir="results/diff_analysis/labels/{algorithm}",
         spe_config="config/23_diff_analysis.yaml",
         metadata="data/metadata.csv",
